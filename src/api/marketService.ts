@@ -9,6 +9,6 @@ export const fetchMarketData = async (marketId: string) => {
 // Fetch category details
 export const fetchCategoryDetails = async (marketId: string, categoryId: string) => {
   const response = await apiClient.get(`/markets/${marketId}/categories/${categoryId}`);
-  console.log("🚀 ~ fetchCategoryDetails ~ response:", response)
+//   console.log("🚀 ~ fetchCategoryDetails ~ response:", response)
   return response.data;
 };

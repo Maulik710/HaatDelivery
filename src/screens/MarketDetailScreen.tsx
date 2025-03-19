@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, Dimensions, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadCategoryDetails } from '../features/market/marketSlice';
+import { loadCategoryDetails } from '../reducer/market/marketSlice';
 import { AppDispatch, RootState } from '../store';
 import env from '../config/env';
 
@@ -13,6 +13,7 @@ const MarketDetailScreen = ({ route }: any) => {
     const dispatch = useDispatch<AppDispatch>();
     const { categoryDetails } = useSelector((state: RootState) => state.market); //loading
     const { categories } = useSelector((state: RootState) => state.market);
+    const selectedLanguage = useSelector((state: RootState) => state.language);
     // console.log("🚀 ~ MarketDetailScreen ~ categories:", categories)
 
     const [selectedCategoryIndex, setSelectedCategoryIndex] = useState<number>(0);
@@ -30,7 +31,7 @@ const MarketDetailScreen = ({ route }: any) => {
             setSelectedCategoryIndex(initialCategoryIndex);
             dispatch(loadCategoryDetails({ marketId: '4532', categoryId }));
         }
-    }, [dispatch, categoryId, categories]);
+    }, [ dispatch,categoryId, categories]);
 
     const onViewableItemsChanged = ({ viewableItems }: any) => {
         // Assuming you want to track the first visible item's index in the FlatList
@@ -44,17 +45,20 @@ const MarketDetailScreen = ({ route }: any) => {
         const contentHeight = event.nativeEvent.contentSize.height;
         const layoutHeight = event.nativeEvent.layoutMeasurement.height;
 
+         // Track the pull-down height
+    // const pullDownHeight = Math.abs(contentOffsetY); 
         if (contentOffsetY <= 0 && !scrollTopRef.current) {
             scrollTopRef.current = true
             console.log('Scrolled to top:')
             if (selectedCategoryIndex > 0) {
                 // Scroll past the first subcategory, move to the previous category
                 setSelectedCategoryIndex(selectedCategoryIndex - 1);
+                setSelectedSubcategoryIndex(0)
                 dispatch(loadCategoryDetails({ marketId: '4532', categoryId: categories.marketCategories[selectedCategoryIndex - 1].id }));
             }
             setTimeout(() => {
                 scrollTopRef.current = false
-            }, 500)
+            }, 600)
         }
 
         if (contentOffsetY + layoutHeight >= contentHeight && !scrollBottomRef.current) {
@@ -68,7 +72,7 @@ const MarketDetailScreen = ({ route }: any) => {
             }
             setTimeout(() => {
                 scrollBottomRef.current = false
-            }, 500)
+            }, 600)
         }
     };
 
@@ -81,10 +85,10 @@ const MarketDetailScreen = ({ route }: any) => {
     };
 
     useEffect(() => {
-        if (categoryDetails?.marketSubcategories?.length > 0) {
+        if (selectedSubcategoryIndex > 0) {
             scrollToSelectedSubcategory(selectedSubcategoryIndex);
         }
-    }, [selectedSubcategoryIndex, categoryDetails]);
+    }, [selectedSubcategoryIndex]);
 
     // if (loading) return <Text>Loading...</Text>;
 
@@ -117,7 +121,7 @@ const MarketDetailScreen = ({ route }: any) => {
                         style={{ height: 30, paddingHorizontal: 8, marginHorizontal: 4, borderRadius: 18, backgroundColor: index === selectedCategoryIndex ? 'pink' : 'transparent', alignItems: 'center', justifyContent: 'center' }}
                         onPress={() => handleCategorySelect(index, item.id)}
                     >
-                        <Text>{item.name['en-US']}</Text>
+                        <Text>{item.name[selectedLanguage?.language]}</Text>
                     </TouchableOpacity>
                 )}
                 horizontal
@@ -133,7 +137,7 @@ const MarketDetailScreen = ({ route }: any) => {
                         style={{ height: 30, paddingHorizontal: 8, marginHorizontal: 4, borderBottomWidth: 1, borderBottomColor: index === selectedSubcategoryIndex ? 'blue' : 'transparent', alignItems: 'center', justifyContent: 'center' }}
                         onPress={() => handleSubcategorySelect(index)}
                     >
-                        <Text>{item.name['en-US']}</Text>
+                        <Text>{item.name[selectedLanguage?.language]}</Text>
                     </TouchableOpacity>
                 )}
                 horizontal
@@ -165,7 +169,7 @@ const MarketDetailScreen = ({ route }: any) => {
                                                     resizeMode="cover"
                                                     style={styles.categoryImage}
                                                 />
-                                                <Text style={{ fontSize: 12, fontWeight: '500' }}>{itm.name['en-US']}</Text>
+                                                <Text style={{ fontSize: 12, fontWeight: '500' }}>{itm.name[selectedLanguage?.language]}</Text>
                                             </View>
                                         );
                                     }}
@@ -200,3 +204,4 @@ const styles = StyleSheet.create({
 });
 
 export default MarketDetailScreen;
+

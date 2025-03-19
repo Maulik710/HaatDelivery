@@ -1,97 +1,130 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Haat Delivery React Native Project
 
-# Getting Started
+## Prerequisites
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- Node.js (version >=14)
+- npm or yarn
+- React Native CLI
+- Android Studio (for Android) or Xcode (for iOS)
 
-## Step 1: Start Metro
+## Setup Instructions
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+1.  Clone the repository:
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+    ```bash
+    git clone https://github.com/Maulik710/HaatDelivery.git
+    cd HaatDelivery
 
-```sh
-# Using npm
-npm start
+    ```
 
-# OR using Yarn
-yarn start
-```
+2.  Install dependencies:
+    npm install
 
-## Step 2: Build and run your app
+    # OR
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+    yarn install
 
-### Android
+3.  Set up the Android or iOS environment:
 
-```sh
-# Using npm
-npm run android
+    For Android:
+    Open Android Studio, install necessary SDKs and start an emulator.
+    Run the project on the emulator or a connected device:
 
-# OR using Yarn
-yarn android
-```
+        npx react-native run-android
 
-### iOS
+    For iOS:
+    Install CocoaPods:
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+             cd ios && pod install && cd ..
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+        Run the project on the iOS simulator
 
-```sh
-bundle install
-```
+            npx react-native run-ios
 
-Then, and every time you update your native dependencies, run:
+# Features
 
-```sh
-bundle exec pod install
-```
+1. Category Navigation:
+    - Horizontal scrollable list of market categories.
+    - Users can select a category to view related subcategories and products.
+  
+2. Subcategory Navigation:
+    - Horizontal scrollable list of subcategories within the selected category.
+    - Upon selection, products of the chosen subcategory are displayed.
+  
+3. Product Grid:
+    - Displays products in a 3-column grid layout, with product images and names.
+    - Dynamically loads products based on selected subcategory.
+  
+4. Dynamic Data Loading:
+    - Uses Redux for managing state and fetching category details as the user interacts with categories and subcategories.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+5. Scroll Management (Top and Bottom):
+    - Detects when the user scrolls to the top or bottom of the list and automatically loads the previous or next category's products.
 
-```sh
-# Using npm
-npm run ios
+6. Responsive Layout:
+    - The component adapts to different screen sizes with responsive layouts for product images and category names.
 
-# OR using Yarn
-yarn ios
-```
+# Approach to Features
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+1. Category & Subcategory Navigation:
+    - Approach: Horizontal FlatList components were used to display categories and subcategories. Tapping a category or subcategory updates the state, triggering a data fetch for the selected items.
+    - Challenge: Ensuring that the selected category and subcategory were dynamically updated based on user interactions.
+    - Resolution: Managed selected indices with useState and dynamically updated styles for active selections.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+2. Product Grid Layout:
+    - Approach: Products are displayed in a 3-column grid layout using the FlatList component with numColumns={3}. Each product has an image and a name.
+    - Challenge: Ensuring the grid layout is responsive and that images load correctly without causing lag.
+    - Resolution: Used dynamic image URLs and applied responsive styles for product items to accommodate different screen sizes.
 
-## Step 3: Modify your app
+3. Dynamic Data Loading:
+    - Approach: Data is loaded dynamically from the Redux store using the loadCategoryDetails action when a category or subcategory is selected.
+    - Challenge: Ensuring data loads seamlessly as the user switches between categories and subcategories.
+    - Resolution: Implemented Redux for state management and dispatched actions to load category details upon selection.
 
-Now that you have successfully run the app, let's make changes!
+4. Scroll Management (Top and Bottom):
+    - Approach: Added functionality to detect when the user scrolls to the top or bottom. When this occurs, the app automatically loads the previous or next category's products.
+    - Challenge: Avoiding repeated triggers when the user scrolls quickly.
+    - Resolution: Used refs (scrollTopRef and scrollBottomRef) to limit the number of triggers and prevent rapid reloads.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+5. Performance and Image Rendering:
+    - Approach: Optimized image loading with resizeMode="cover" to ensure smooth rendering, and cached images to improve performance.
+    - Challenge: Preventing lag when rendering product images and ensuring smooth scrolling.
+    - Resolution: Implemented optimized image URLs and used React Native’s built-in image caching to handle performance efficiently.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+# Challenges and Resolutions
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+1. Smooth Category and Subcategory Transition:
+    - Challenge: Ensuring smooth transitions between categories and subcategories without causing UI glitches or lag.
+    - Resolution: Managed transitions using FlatList components and handled state changes efficiently using Redux to avoid unnecessary rerenders.
 
-## Congratulations! :tada:
+2. Efficient Image Rendering:
+    - Challenge: Loading multiple product images without causing performance issues, especially in large datasets.
+    - Resolution: Leveraged resizeMode="cover" and optimized image URLs for faster loading and smooth rendering.
 
-You've successfully run and modified your React Native App. :partying_face:
+3. Scroll Management:
+    - Challenge: Ensuring that category transitions happened smoothly when scrolling to the top or bottom, without triggering multiple reloads in quick succession.
+    - Resolution: Used refs to manage the scroll state and prevent multiple triggers during fast scrolling.
 
-### Now what?
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+# Testing Instructions
 
-# Troubleshooting
+To test the features of the MarketDetailScreen component, follow the steps below:
+1. Test Category Navigation:
+    - Scroll horizontally through the list of categories.
+    - Tap on different categories and verify that the associated subcategories and products update correctly.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+2. Test Subcategory Navigation:
+    - Scroll horizontally through the subcategories under the selected category.
+    - Tap on different subcategories and ensure the product grid updates to display the correct products.
 
-# Learn More
+3. Test Product Grid:
+    - Scroll vertically through the product grid.
+    - Ensure that product images and names display correctly and that products are shown in a 3-column layout.
 
-To learn more about React Native, take a look at the following resources:
+4. Test Scroll Behavior (Top and Bottom Detection):
+    - Scroll to the top or bottom of the product list.
+    - Verify that the previous or next category's products are automatically loaded when the user scrolls to the top or bottom.
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+5. Test Performance:
+    - Scroll quickly through categories, subcategories, and products.
+    - Ensure that there is no lag or janky scrolling during transitions.

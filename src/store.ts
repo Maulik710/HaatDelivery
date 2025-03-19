@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import marketReducer from './features/market/marketSlice';
+import marketReducer from './reducer/market/marketSlice';
+import languageReducer from './reducer/language/languageSlice';
 
 const store = configureStore({
   reducer: {
     market: marketReducer,
+    language: languageReducer,
   },
 });
 
