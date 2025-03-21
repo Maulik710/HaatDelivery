@@ -19,6 +19,7 @@ type MarketSubCategory = {
 type Product = {
     id: string;
     name: { [key: string]: string }
+    pproductImages:any;
 };
 
 
@@ -208,13 +209,14 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
                         ref={flatListItemsRef}
                         data={categoryDetails?.marketSubcategories}
                         keyExtractor={(item, index) => index.toString()}
+                        showsVerticalScrollIndicator={false}
                         renderItem={({ item, index }) => (
                             <View key={index} style={styles.itemContainer}>
                                 <FlatList
                                     data={item.products}
                                     contentContainerStyle={styles.productList}
                                     keyExtractor={(itm, ind) => ind.toString()}
-                                    renderItem={({ item: itm, index: ind }) => <ProductItem key={ind} item={itm} language={language} />}
+                                    renderItem={({ item: itm, index: ind }:any) => <ProductItem key={ind} item={itm} language={language} />}
                                     numColumns={3}
                                     scrollEnabled={false}
                                 />
