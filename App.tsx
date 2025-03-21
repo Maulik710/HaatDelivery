@@ -4,8 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import store from './src/store';
-import MarketListScreen from './src/screens/MarketListScreen';
-import MarketDetailScreen from './src/screens/MarketDetailScreen';
+import MarketListScreen from './src/screens/MarketList/MarketListScreen';
+import MarketDetailScreen from './src/screens/MarketDetail/MarketDetailScreen';
 
 const Stack = createStackNavigator();
 

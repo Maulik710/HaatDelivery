@@ -6,8 +6,8 @@ export interface Item {
 }
 
 export interface MarketState {
-    categories: any | null;
-    categoryDetails: any | null;
+    categories:  { [key: string]: any } | null;
+    categoryDetails:  { [key: string]: any }  | null;
     loading: boolean;
     error: string | undefined | null;
 }
