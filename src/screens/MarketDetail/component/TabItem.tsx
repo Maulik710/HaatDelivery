@@ -7,23 +7,23 @@ type MarketCategory = {
 };
 
 interface TabItemProps {
-  item: MarketCategory;
-  index: number;
-  activeTab: number;
-  language: string;
-  onTabPress: (index: number) => void;
+    item: MarketCategory;
+    index: number;
+    activeTab: number;
+    language: string;
+    onTabPress: (index: number) => void;
 }
 
-const TabItem = ({ item, index, activeTab, language, onTabPress }:TabItemProps) => (
-  <TouchableOpacity
-    style={[
-      styles.tabItem,
-      { backgroundColor: index === activeTab ? 'pink' : 'transparent' },
-    ]}
-    onPress={() => onTabPress(index)}
-  >
-    <Text>{item.name[language]}</Text>
-  </TouchableOpacity>
+const TabItem = ({ item, index, activeTab, language, onTabPress }: TabItemProps) => (
+    <TouchableOpacity
+        style={[
+            styles.tabItem,
+            { backgroundColor: index === activeTab ? 'pink' : 'transparent' },
+        ]}
+        onPress={() => onTabPress(index)}
+    >
+        <Text>{item.name[language]}</Text>
+    </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({

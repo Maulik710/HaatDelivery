@@ -35,8 +35,7 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
 
     const [activeTab, setActiveTab] = useState<number>(0);
     const [activeSubTab, setActiveSubTab] = useState<number>(0);
-    const [endReached, setEndReached] = useState<boolean>(false);
-    // const [endAfterScroll, setEndAfterScroll] = useState<boolean>(false);
+    const [endAfterScroll, setEndAfterScroll] = useState<boolean>(false);
     const lastScrollY = useRef(0);
 
     const dispatch = useDispatch<AppDispatch>();
@@ -46,7 +45,6 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
     const flatListRef = useRef<FlatList<MarketCategory>>(null);
     const flatListSubTabRef = useRef<FlatList<MarketSubCategory>>(null);
     const flatListItemsRef = useRef<FlatList<MarketSubCategory>>(null);
-    const scrollThreshold = 50;
 
 
     const onLoadData = useCallback(() => {
@@ -89,13 +87,13 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
         }
     };
 
-    // const handleEndReached = () => {
-    //     if (activeTab < categories.marketCategories.length - 1) {
-    //         setActiveTab(activeTab + 1);
-    //         dispatch(loadCategoryDetails({ marketId: '4532', categoryId: categories.marketCategories[activeTab + 1].id }));
-    //         flatListRef.current?.scrollToIndex({ index: activeTab + 1, animated: true });
-    //     }
-    // };
+    const handleEndReached = () => {
+        if (activeTab < categories?.marketCategories.length - 1) {
+            setActiveTab(activeTab + 1);
+            dispatch(loadCategoryDetails({ marketId: '4532', categoryId: categories?.marketCategories[activeTab + 1].id }));
+            flatListRef.current?.scrollToIndex({ index: activeTab + 1, animated: true });
+        }
+    };
 
     const handleTopReached = () => {
         if (activeTab > 0) {
@@ -105,14 +103,26 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
         }
     };
 
-    const handleScroll = (event:NativeSyntheticEvent<NativeScrollEvent>) => {
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const currentOffset = event.nativeEvent.contentOffset.y;
-        const scrollDifference = currentOffset - lastScrollY.current;
+        // const scrollDifference = currentOffset - lastScrollY.current;
 
-        if (endReached && Math.abs(scrollDifference) >= scrollThreshold) {
-            console.log("Bottom called!");
-            setEndReached(false);
-            // setEndAfterScroll(true);
+        const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+        // Calculate the distance from the bottom of the list
+        const distanceFromBottom = contentSize.height - (contentOffset.y + layoutMeasurement.height);
+        // console.log("🚀 ~ handleScroll ~ distanceFromBottom:", distanceFromBottom)
+
+        // trigger an automatic scroll by a fixed amount.
+        if (distanceFromBottom <= -30 && !endAfterScroll) {
+            // console.log("New Bottom call");
+            setEndAfterScroll(true)
+            handleEndReached()
+
+        }
+
+        // If the user scrolls upward
+        if (distanceFromBottom > 50 && endAfterScroll) {
+            setEndAfterScroll(false)
         }
 
         lastScrollY.current = currentOffset;
@@ -140,8 +150,8 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
     };
 
     const getItemLayout = (data: ArrayLike<MarketCategory> | null | undefined, index: number) => ({
-        length: 120,
-        offset: 100 * index,
+        length: 90,
+        offset: 90 * index,
         index,
     });
 
@@ -155,12 +165,18 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
                     style={styles.tabList}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => (
-                        <TabItem item={item} index={index} activeTab={activeTab} language={language}  onTabPress={handleTabPress} />
+                        <TabItem
+                            item={item}
+                            index={index}
+                            activeTab={activeTab}
+                            language={language}
+                            onTabPress={handleTabPress}
+                        />
                     )}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     getItemLayout={getItemLayout}
-                    onContentSizeChange={handleContentSizeChange} 
+                    onContentSizeChange={handleContentSizeChange}
                 />
             </View>
 
@@ -208,28 +224,13 @@ const MarketDetailScreen = ({ route }: MarketDetailScreenProps) => {
                         viewabilityConfig={{
                             viewAreaCoveragePercentThreshold: 50,
                         }}
-                        onEndReached={() => {
-                            if (!endReached) {
-                                console.log("End reached!");
-                                setEndReached(true);
-                            }
-                        }}
-                        onEndReachedThreshold={0.1}
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
                         onMomentumScrollBegin={() => {
                             if (lastScrollY.current <= 0) {
-                                console.log("Top reached!");
                                 handleTopReached();
                             }
                         }}
-                        // onMomentumScrollEnd={() => {
-                        //     if (endAfterScroll) {
-                        //         console.log("Bottom reached!");
-                        //         handleEndReached();
-                        //         setEndAfterScroll(false);
-                        //     }
-                        // }}
                     />
                 </>
             )}
